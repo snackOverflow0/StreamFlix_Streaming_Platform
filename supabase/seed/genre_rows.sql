@@ -1,0 +1,1 @@
+INSERT INTO "public"."genre" ("genre_id", "genre_name") VALUES (1, 'Action'), (2, 'Sci-Fi'), (3, 'Drama'), (4, 'Comedy'), (5, 'Horror'), (6, 'Romance'), (7, 'Fantasy'), (8, 'Thriller'), (9, 'Animation'), (10, 'Documentary'), (11, 'Crime'), (12, 'Adventure');
