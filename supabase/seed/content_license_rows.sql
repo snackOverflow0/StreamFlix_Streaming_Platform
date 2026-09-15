@@ -1,1 +1,14 @@
-INSERT INTO "public"."content_license" ("license_id", "licensor_name", "expiration_date", "region") VALUES (1, 'Warner Bros. Pictures', '2027-12-31', 'Worldwide'), (2, 'Universal Studios', '2026-06-30', 'Worldwide'), (3, 'Legendary Pictures', '2027-03-15', 'North America'), (4, 'Netflix Studios', '2028-01-01', 'Worldwide'), (5, 'A24', '2026-11-01', 'North America, Europe'), (6, 'Sony Pictures', '2027-08-20', 'Worldwide'), (7, 'Paramount Pictures', '2026-09-30', 'Worldwide'), (8, 'HBO Originals', '2028-05-01', 'Worldwide'), (9, 'Blumhouse Productions', '2026-10-31', 'North America'), (10, 'Amblin Entertainment', '2027-07-01', 'Worldwide'), (11, '20th Century Studios', '2027-02-28', 'Worldwide'), (12, 'Pixar Animation Studios', '2028-03-01', 'Worldwide');
+INSERT INTO "public"."content_license"
+ ("license_id", "licensor_name", "expiration_date", "region") VALUES
+  (1, 'Warner Bros. Pictures', '2027-12-31', 'Worldwide'), 
+  (2, 'Universal Studios', '2026-06-30', 'Worldwide'), 
+  (3, 'Legendary Pictures', '2027-03-15', 'North America'), 
+  (4, 'Netflix Studios', '2028-01-01', 'Worldwide'), 
+  (5, 'A24', '2026-11-01', 'North America, Europe'), 
+  (6, 'Sony Pictures', '2027-08-20', 'Worldwide'), 
+  (7, 'Paramount Pictures', '2026-09-30', 'Worldwide'), 
+  (8, 'HBO Originals', '2028-05-01', 'Worldwide'), 
+  (9, 'Blumhouse Productions', '2026-10-31', 'North America'), 
+  (10, 'Amblin Entertainment', '2027-07-01', 'Worldwide'), 
+  (11, '20th Century Studios', '2027-02-28', 'Worldwide'), 
+  (12, 'Pixar Animation Studios', '2028-03-01', 'Worldwide');
