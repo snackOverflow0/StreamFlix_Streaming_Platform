@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { supabase } from "./config/supabase.js";
+import contentRoutes from "./modules/content/content.routes.js";
 
 const app = express();
 
@@ -22,8 +23,8 @@ app.get("/api/health", (_req, res) => {
 
 app.get("/api/test-db", async (_req, res) => {
   const { data, error } = await supabase
-    .from("users")
-    .select("user_id")
+    .from("genre")
+    .select("genre_id, genre_name")
     .limit(5);
 
   if (error) {
@@ -42,5 +43,7 @@ app.get("/api/test-db", async (_req, res) => {
     data,
   });
 });
+
+app.use("/api/content", contentRoutes);
 
 export default app;
