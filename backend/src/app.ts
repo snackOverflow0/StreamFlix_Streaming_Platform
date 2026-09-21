@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { supabase } from "./config/supabase.js";
 import contentRoutes from "./modules/content/content.routes.js";
+import { getGenres } from "./modules/genres/genre.controller.js";
 
 const app = express();
 
@@ -45,5 +46,6 @@ app.get("/api/test-db", async (_req, res) => {
 });
 
 app.use("/api/content", contentRoutes);
+app.use("/api/genres", getGenres);
 
 export default app;
