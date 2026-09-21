@@ -1,5 +1,8 @@
 import type { Request, Response } from "express";
-import { getAllContent } from "./content.service.js";
+import {
+  getAllContent,
+  getContentById,
+} from "./content.service.js";
 
 export async function getContent(_req: Request, res: Response) {
   try {
@@ -10,8 +13,52 @@ export async function getContent(_req: Request, res: Response) {
       data: content,
     });
   } catch (error) {
-    const message = 
+    const message =
       error instanceof Error ? error.message : "Failed to get content";
+
+    res.status(500).json({
+      success: false,
+      message,
+    });
+  }
+}
+
+export async function getContentDetails(
+  req: Request,
+  res: Response
+) {
+  const contentId = Number(req.params.contentId);
+
+  if (!Number.isInteger(contentId)) {
+    res.status(400).json({
+      success: false,
+      message: "Invalid content ID",
+    });
+
+    return;
+  }
+
+  try {
+    const content = await getContentById(contentId);
+
+    if (!content) {
+      res.status(404).json({
+        success: false,
+        message: "Content not found",
+      });
+
+      return;
+    }
+
+    res.json({
+      success: true,
+      data: content,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Failed to get content details";
 
     res.status(500).json({
       success: false,
