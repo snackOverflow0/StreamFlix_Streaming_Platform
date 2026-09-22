@@ -1,11 +1,14 @@
 import express from "express";
 import cors from "cors";
+
 import { supabase } from "./config/supabase.js";
 
 import contentRoutes from "./modules/content/content.routes.js";
-import { getGenres } from "./modules/genres/genre.controller.js";
+import genreRoutes from "./modules/genres/genre.routes.js";
 import seasonRoutes from "./modules/seasons/season.routes.js";
 import episodeRoutes from "./modules/episodes/episode.routes.js";
+import userRoutes from "./modules/users/user.routes.js";
+import profileRoutes from "./modules/profiles/profile.routes.js";
 
 const app = express();
 
@@ -49,9 +52,10 @@ app.get("/api/test-db", async (_req, res) => {
 });
 
 app.use("/api/content", contentRoutes);
-app.use("/api/genres", getGenres);
-
+app.use("/api/genres", genreRoutes);
 app.use("/api/seasons", seasonRoutes);
 app.use("/api/episodes", episodeRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/profiles", profileRoutes);
 
 export default app;
