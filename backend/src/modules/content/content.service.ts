@@ -22,13 +22,49 @@ export async function getContentById(contentId: number) {
       "content_id, title, type, genre_name, licensor_name, release_date, director, age_rating"
     )
     .eq("content_id", contentId)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
+    throw new Error(error.message);
+  }
 
+  return data;
+}
+
+export async function searchContent(
+  search?: string,
+  genre?: string,
+  type?: string
+) {
+  let query = supabase
+    .from("content_catalog")
+    .select(
+      "content_id, title, type, genre_name, licensor_name, release_date, director, age_rating"
+    );
+
+  if (search) {
+    const safeSearch = search.replace(/[%_,()*]/g, "").trim();
+
+    if (safeSearch) {
+      query = query.or(
+        `title.ilike.%${safeSearch}%,director.ilike.%${safeSearch}%,genre_name.ilike.%${safeSearch}%`
+      );
+    }
+  }
+
+  if (genre) {
+    query = query.ilike("genre_name", genre);
+  }
+
+  if (type) {
+    query = query.eq("type", type);
+  }
+
+  const { data, error } = await query
+    .order("release_date", { ascending: false })
+    .limit(50);
+
+  if (error) {
     throw new Error(error.message);
   }
 

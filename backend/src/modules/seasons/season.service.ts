@@ -1,6 +1,8 @@
 import { supabase } from "../../config/supabase.js";
 
-export async function getSeasonsByContent(contentId: number) {
+export async function getSeasonsByContent(
+  contentId: number
+) {
   const { data, error } = await supabase
     .from("season")
     .select(
@@ -9,9 +11,9 @@ export async function getSeasonsByContent(contentId: number) {
     .eq("content_id", contentId)
     .order("season_number", { ascending: true });
 
-    if (error) {
-      throw new Error(error.message);
-    }
+  if (error) {
+    throw new Error(error.message);
+  }
 
-    return data;
+  return data;
 }

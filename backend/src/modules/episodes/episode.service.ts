@@ -1,6 +1,8 @@
 import { supabase } from "../../config/supabase.js";
 
-export async function getEpisodesBySeason(seasonId: number) {
+export async function getEpisodesBySeason(
+  seasonId: number
+) {
   const { data, error } = await supabase
     .from("episodes")
     .select(

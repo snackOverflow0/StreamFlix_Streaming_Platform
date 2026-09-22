@@ -1,7 +1,13 @@
 import type { Request, Response } from "express";
-import { getEpisodesBySeason } from "./episode.service.js";
 
-export async function getEpisodes(req: Request, res: Response) {
+import {
+  getEpisodesBySeason,
+} from "./episode.service.js";
+
+export async function getEpisodes(
+  req: Request,
+  res: Response
+) {
   const seasonId = Number(req.params.seasonId);
 
   if (!Number.isInteger(seasonId)) {
@@ -14,7 +20,9 @@ export async function getEpisodes(req: Request, res: Response) {
   }
 
   try {
-    const episodes = await getEpisodesBySeason(seasonId);
+    const episodes = await getEpisodesBySeason(
+      seasonId
+    );
 
     res.json({
       success: true,
@@ -22,7 +30,9 @@ export async function getEpisodes(req: Request, res: Response) {
     });
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Failed to get episodes";
+      error instanceof Error
+        ? error.message
+        : "Failed to get episodes";
 
     res.status(500).json({
       success: false,
