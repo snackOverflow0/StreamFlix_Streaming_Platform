@@ -1,0 +1,25 @@
+export type ContentRecord = {
+  content_id: number;
+  genre_id: number;
+  license_id: number;
+  title: string;
+  description: string;
+  release_date: string;
+  director: string | null;
+  cast?: string | null;
+  synopsis: string;
+  type: string;
+  age_rating: string;
+  created_at: string;
+  deleted_at: string | null;
+  trailer_url: string | null;
+  genre_name?: string | null;
+  licensor_name?: string | null;
+  license_expiration?: string | null;
+  rating?: number;
+  review_count?: number;
+  poster_url?: string | null;
+  preview_url?: string | null;
+  hero_url?: string | null;
+  duration_label?: string | null;
+};

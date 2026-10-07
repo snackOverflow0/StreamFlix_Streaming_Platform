@@ -1,0 +1,12 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.middleware.js";
+import { plans, plan, byUser, one, create, patch } from "./subscription.controller.js";
+const router = Router();
+router.get("/plans", plans);
+router.get("/plans/:planId", plan);
+router.use(requireAuth);
+router.get("/user/:userId", byUser);
+router.get("/:subscriptionId", one);
+router.post("/user/:userId", create);
+router.patch("/:subscriptionId", patch);
+export default router;

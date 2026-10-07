@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070b1a" />
+    <meta name="description" content="StreamFlix streaming platform" />
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; connect-src 'self' http://localhost:4000 https://*.supabase.co https://api.stripe.com https://*.stripe.com; img-src 'self' data: blob: http://localhost:4000 https://*.supabase.co https://*.stripe.com; media-src 'self' blob: http://localhost:4000 https://*.supabase.co; style-src 'self' 'unsafe-inline'; script-src 'self' https://js.stripe.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.stripe.com; font-src 'self' data: https://*.stripe.com;"
+    />
+
+    <title>StreamFlix</title>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

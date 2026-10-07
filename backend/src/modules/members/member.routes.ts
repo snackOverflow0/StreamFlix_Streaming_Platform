@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.middleware.js";
+import { bySubscription, create, one, remove } from "./member.controller.js";
+const router = Router();
+router.use(requireAuth);
+router.get("/subscription/:subscriptionId", bySubscription);
+router.get("/:memberId", one);
+router.post("/subscription/:subscriptionId", create);
+router.delete("/:memberId", remove);
+export default router;

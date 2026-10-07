@@ -1,0 +1,1 @@
+INSERT INTO "public"."plans" ("plan_id", "plan_name", "max_members", "monthly_price", "is_active") VALUES (1, 'Mobile', 1, '129.00', true), (2, 'Basic', 1, '199.00', true), (3, 'Standard', 2, '349.00', true), (4, 'Premium', 4, '549.00', true), (5, 'Student', 1, '149.00', true);
