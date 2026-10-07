@@ -5,7 +5,7 @@ import cors from "cors";
 import { env } from "./config/env.js";
 import { supabase } from "./config/supabase.js";
 import { securityHeaders } from "./middleware/security.middleware.js";
-// import { generalRateLimit, mutationRateLimit } from "./middleware/rate-limit.middleware.js";
+import { generalRateLimit, mutationRateLimit } from "./middleware/rate-limit.middleware.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 import authRoutes from "./modules/auth/auth.routes.js";
@@ -27,6 +27,7 @@ import merchandiseRoutes from "./modules/merchandise/merchandise.routes.js";
 import notificationRoutes from "./modules/notifications/notification.routes.js";
 import recommendationRoutes from "./modules/recommendations/recommendation.routes.js";
 import visitorRoutes from "./modules/visitors/visitor.routes.js";
+import adminRoutes from "./modules/admin/admin.routes.js";
 
 const app = express();
 
@@ -34,7 +35,7 @@ app.set("trust proxy", 1);
 app.disable("x-powered-by");
 
 app.use(securityHeaders);
-// app.use(generalRateLimit);
+app.use(generalRateLimit);
 
 app.use(
   cors({
@@ -89,6 +90,7 @@ app.get("/api/test-db", async (_req, res, next) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/genres", genreRoutes);
 app.use("/api/seasons", seasonRoutes);

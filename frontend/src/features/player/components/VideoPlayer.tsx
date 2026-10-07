@@ -796,7 +796,7 @@ export function VideoPlayer({
       {/* Buffering */}
       {buffering ? (
         <div className="pointer-events-none absolute inset-0 z-40 grid place-items-center">
-          <div className="size-12 animate-spin rounded-full border-4 border-white/20 border-t-red-500 sm:size-14" />
+          <div className="size-12 animate-spin rounded-full border-4 border-white/20 border-t-violet-500 sm:size-14" />
         </div>
       ) : null}
 
@@ -846,7 +846,7 @@ export function VideoPlayer({
             <div className="pointer-events-none absolute left-0 top-1/2 h-1 -translate-y-1/2 overflow-hidden rounded-full bg-white/25 transition-all group-hover:h-1.5 w-full" />
 
             <div
-              className="pointer-events-none absolute left-0 top-1/2 z-[1] h-1 -translate-y-1/2 rounded-full bg-red-600 transition-all group-hover:h-1.5"
+              className="pointer-events-none absolute left-0 top-1/2 z-[1] h-1 -translate-y-1/2 rounded-full bg-violet-600 transition-all group-hover:h-1.5"
               style={{ width: `${progress}%` }}
             />
 
@@ -861,7 +861,7 @@ export function VideoPlayer({
               onChange={(event) => {
                 handleProgressChange(Number(event.target.value));
               }}
-              className="relative z-10 block h-1.5 w-full cursor-pointer appearance-none bg-transparent accent-red-600 group-hover:h-2"
+              className="relative z-10 block h-1.5 w-full cursor-pointer appearance-none bg-transparent accent-violet-600 group-hover:h-2"
             />
           </div>
 
@@ -923,7 +923,7 @@ export function VideoPlayer({
                 onChange={(event) => {
                   changeVolume(Number(event.target.value));
                 }}
-                className="hidden h-1 w-20 cursor-pointer accent-red-600 sm:block"
+                className="hidden h-1 w-20 cursor-pointer accent-violet-600 sm:block"
               />
             </div>
 
@@ -981,7 +981,7 @@ export function VideoPlayer({
                       >
                         <span>{value}×</span>
                         {speed === value ? (
-                          <span className="text-xs text-red-500">✓</span>
+                          <span className="text-xs text-violet-500">✓</span>
                         ) : null}
                       </button>
                     ))}

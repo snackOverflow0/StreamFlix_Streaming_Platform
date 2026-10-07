@@ -3,6 +3,7 @@ import AppHeader from "./components/AppHeader";
 import AppOverlays from "./components/AppOverlays";
 import MainContent from "./components/MainContent";
 import ActionFeedback from "./components/ActionFeedback";
+import CookieConsent from "./components/CookieConsent";
 import { useStreamFlix } from "./hooks/useStreamFlix";
 
 export default function StreamFlixApp() {
@@ -11,6 +12,7 @@ export default function StreamFlixApp() {
   return (
     <>
       <ActionFeedback />
+      <CookieConsent />
       {state.authStage !== "app" ? (
         <AuthGate state={state} />
       ) : (
