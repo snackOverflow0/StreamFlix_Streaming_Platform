@@ -71,3 +71,15 @@ html{overflow-x:clip;scrollbar-gutter:stable}body{margin:0;overflow-x:clip}#root
 
 .sf-title-details{background:#0b1023!important;backdrop-filter:none!important}.sf-title-details .sf-detail-actions button{height:44px;border-radius:8px}.sf-title-details .sf-detail-actions button:not(.sf-primary-play){background:#ffffff06;border-color:#ffffff20}
 .toaster{--normal-bg:#151d31;--normal-text:#e4e9f4;--normal-border:#ffffff20}.sf-client-header nav[aria-label="Main navigation"]{padding:4px;isolation:isolate}
+
+/* Responsive client page scrolling and swipe/drag catalog browsing. */
+@media (max-width: 800px) {
+ html:has(.sf-client),body:has(.sf-client){height:auto!important;max-height:none!important;overflow-y:auto!important;overflow-x:clip!important;overscroll-behavior-y:auto!important}
+ #root:has(.sf-client){height:auto!important;min-height:100dvh;overflow:visible!important}
+ .sf-client{height:auto!important;min-height:100dvh;overflow-y:visible!important;touch-action:pan-y}
+ .sf-carousel-track,.sf-top-ten-scroll,.sf-genre-chips{overflow-x:auto!important;overflow-y:hidden!important;touch-action:pan-x pan-y!important;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+ .sf-carousel-track>* ,.sf-top-ten-scroll>*{flex-shrink:0}
+}
+.sf-carousel-track,.sf-top-ten-scroll{cursor:grab}
+.sf-carousel-track.sf-is-dragging,.sf-top-ten-scroll.sf-is-dragging{cursor:grabbing;scroll-snap-type:none!important;user-select:none;-webkit-user-select:none}
+.sf-is-dragging *{user-select:none!important;-webkit-user-select:none!important}

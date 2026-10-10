@@ -1,3 +1,4 @@
+import { useCarouselDrag } from "@/hooks/useCarouselDrag";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TitleCard } from "./TitleCard";
@@ -24,6 +25,7 @@ export function TopTenRow({
 }: TopTenRowProps) {
   const topTen = items.slice(0, 10);
   const rowRef = useRef<HTMLDivElement>(null);
+  useCarouselDrag(rowRef);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 

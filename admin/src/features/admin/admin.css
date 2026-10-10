@@ -612,3 +612,42 @@
  .sf-admin .header-popover{position:fixed;top:75px;right:12px;left:auto;width:min(320px,calc(100vw - 24px));max-height:70dvh;overflow:auto}
 }
 @media(max-width:420px){.sf-admin .design-stats,.sf-admin .stats,.sf-admin .community-summary{grid-template-columns:minmax(0,1fr)}.sf-admin .resource-card-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Mobile uses document scrolling, rather than the desktop's clipped glass frame. */
+@media(max-width:800px){
+ html:has(.sf-admin),body:has(.sf-admin){height:auto;min-height:100%;overflow-y:auto;overflow-x:clip}
+ #root:has(.sf-admin){height:auto;min-height:100dvh;overflow:visible}
+ .sf-admin{height:auto;min-height:100dvh;overflow:visible;padding:0}
+ .sf-admin .admin-body{height:auto;min-height:100dvh;max-height:none;overflow:visible;overscroll-behavior-y:auto}
+ .sf-admin main{height:auto;max-height:none;overflow:visible;min-width:0;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+ .sf-admin aside{height:100dvh;max-height:100dvh;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom)}
+ .sf-admin aside nav{flex:1 0 auto;overflow:visible}.sf-admin .logout{flex-shrink:0}
+ .sf-admin .sidebar-dismiss{position:fixed;inset:0;touch-action:auto}
+ .sf-admin .modal-backdrop{height:100dvh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+ .sf-admin .editor{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+}
+
+/* Allow mouse wheel, trackpad, and touch to scroll the narrow admin viewport. */
+@media (max-width: 800px) {
+ html:has(.sf-admin),body:has(.sf-admin),#root:has(.sf-admin){overflow-y:auto!important;height:auto!important;max-height:none!important;overscroll-behavior-y:auto}
+ .sf-admin,.sf-admin .admin-body,.sf-admin main{height:auto!important;max-height:none!important;overflow-y:visible!important;touch-action:pan-y;overscroll-behavior-y:auto}
+ .sf-admin .records,.sf-admin .tabs{overscroll-behavior-x:contain;touch-action:pan-x pan-y}
+ .sf-admin .editor{overflow-y:auto!important;max-height:calc(100dvh - 24px)}
+}
+
+/* Mobile accessibility: highly visible catalog actions and pagination controls. */
+@media(max-width:800px){
+ .sf-admin .table-scroll{max-width:100%;overflow-x:auto!important;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+ .sf-admin .actions{display:flex!important;flex-wrap:nowrap!important;gap:8px!important;min-width:max-content;opacity:1!important;visibility:visible!important}
+ .sf-admin .actions button,.sf-admin .content-workspace .actions button,.sf-admin .resource-card-actions button{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;min-width:44px!important;width:44px!important;height:44px!important;min-height:44px!important;padding:10px!important;background:#293657!important;border:1px solid #899fda80!important;color:#f4f6ff!important;border-radius:12px!important;box-shadow:0 2px 9px #0006,inset 0 1px #ffffff20!important;opacity:1!important;visibility:visible!important}
+ .sf-admin .actions button svg,.sf-admin .resource-card-actions button svg{width:19px!important;height:19px!important;stroke-width:2.2}
+ .sf-admin .actions button:active,.sf-admin .actions button:hover,.sf-admin .actions button:focus-visible{background:#6751ce!important;border-color:#d6c9ff!important;color:white!important}
+ .sf-admin .actions button:disabled,.sf-admin footer button:disabled{opacity:.5!important;cursor:not-allowed}
+ .sf-admin .records footer{display:flex!important;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px!important}
+ .sf-admin .records footer>div{display:flex;align-items:center;flex-wrap:wrap;gap:8px;max-width:100%}
+ .sf-admin .records footer button,.sf-admin footer button{min-width:78px!important;min-height:44px!important;padding:10px 13px!important;background:#30416b!important;border:1px solid #91aaff80!important;color:#fff!important;border-radius:10px!important;font-weight:650!important;opacity:1}
+ .sf-admin .records footer button:not(:disabled):hover{background:#6955ce!important;border-color:#c8baff!important}
+ .sf-admin .records footer button:disabled{opacity:.5!important}
+ .sf-admin .tabs button,.sf-admin .tools button{color:#edf2ff!important}
+ .sf-admin .records table{min-width:640px}
+}

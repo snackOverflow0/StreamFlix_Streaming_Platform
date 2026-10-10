@@ -1,3 +1,4 @@
+import { useCarouselDrag } from "@/hooks/useCarouselDrag";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TitleCard } from "./TitleCard";
@@ -18,6 +19,7 @@ export type MediaRowProps = {
 
 export function MediaRow({ title, emptyText, items, episodeLabels, onSelect, onPlay, onFavorite, onWatchlist, favorites, watchlist }: MediaRowProps) {
   const rowRef = useRef<HTMLDivElement>(null);
+  useCarouselDrag(rowRef);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const landscape = true;

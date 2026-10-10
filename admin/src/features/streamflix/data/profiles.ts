@@ -26,7 +26,7 @@ export const DEFAULT_PROFILES: ViewerProfile[] = [
   {
     id: "kids",
     backendId: 3,
-    name: "Chicken",
+    name: "Kids",
     image: "/streamflix/profiles/kids.jpg",
     initials: "K",
     addedAt: "August 28, 2026",

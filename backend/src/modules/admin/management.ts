@@ -54,10 +54,10 @@ async function checkParent(name:string,values:Record<string,unknown>){
 export const managementRouter=Router();
 managementRouter.get('/management',async(_req,res,next)=>{try{const result:Record<string,unknown>={};await Promise.all([
  ...Object.entries(managed).map(async([key,c])=>{result[key]=await Promise.all((await allRows(c.table,'*',c.id,key==='reviews'?'review_date':key==='feedback'?'created_date':undefined)).map(async row=>key==='episodes'?{...row,video_url:row.trailer_url}:key==='products'?{...row,image_url:await resolveTrailerUrl(String(row.image_url||'')).catch(()=>null),stock:row.stock_quantity}:row));}),
- allRows('content','content_id,title,type,deleted_at','content_id').then(rows=>{result.archived=rows.filter(r=>r.deleted_at);}),
+ allRows('content','content_id,title,type,deleted_at,is_active','content_id').then(rows=>{result.archived=rows.filter(r=>r.deleted_at||r.is_active===false);}),
  (async()=>{const {data,error}=await supabase.rpc('streamflix_view_stats');if(error)throw error;result.viewStats=(data??[]).map((row:{content_id:number;views:number;unique_viewers:number})=>({...row,views:Number(row.views),unique_viewers:Number(row.unique_viewers)}));})(),
 ]);res.json(result);}catch(e){next(e);}});
-managementRouter.patch('/content/:id/restore',async(req,res,next)=>{try{const {data,error}=await supabase.from('content').update({deleted_at:null}).eq('content_id',parseId(String(req.params.id))).select('content_id').maybeSingle();if(error)throw error;if(!data)throw new AppError(404,'Content not found');res.json(data);}catch(e){next(e);}});
+managementRouter.patch('/content/:id/restore',async(req,res,next)=>{try{const {data,error}=await supabase.from('content').update({deleted_at:null,is_active:true}).eq('content_id',parseId(String(req.params.id))).select('content_id').maybeSingle();if(error)throw error;if(!data)throw new AppError(404,'Content not found');res.json(data);}catch(e){next(e);}});
 managementRouter.post('/subscriptions',async(req,res,next)=>{try{
  const body=req.body;if(!body||typeof body!=='object'||Array.isArray(body))throw new AppError(400,'Invalid subscription');
  const user=parseId(String(body.subscription_user_id)),plan=parseId(String(body.plan_id));const start=validDate(body.start_date,'start_date'),end=validDate(body.end_date,'end_date');if(end<start)throw new AppError(400,'Expiry must be on or after start');

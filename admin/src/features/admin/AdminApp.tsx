@@ -73,7 +73,7 @@ export default function AdminApp() {
     setError('');
     try {
       if (!preview) await apiRequest(`/admin/content/${row.content_id}/visibility`, {method:'PATCH',body:JSON.stringify({is_active:active})});
-      setData(old=>old?{...old,content:old.content.map(item=>item.content_id===row.content_id?{...item,is_active:active}:item)}:old);
+      await load(true);
       setNotice(`${row.title} is now ${active?'active and visible to users':'inactive and hidden from users'}.${preview?' Preview changes reset on refresh.':''}`);
     } catch(e) {setError((e as Error).message);throw e;}
   }
