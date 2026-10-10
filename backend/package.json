@@ -1,0 +1,33 @@
+{
+  "name": "streamflix-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "StreamFlix backend API using Express, TypeScript, and Supabase",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "node scripts/clean-build.mjs && tsc",
+    "start": "node dist/server.js",
+    "test:admin": "npm run build && node scripts/admin-security-check.mjs",
+    "test:integration": "npm run build && node scripts/integration-check.mjs",
+    "test:functionality": "npm run build && node scripts/functionality-check.mjs",
+    "test:receipts": "npm run build && node scripts/receipt-check.mjs",
+    "test:library": "npm run build && node scripts/client-library-check.mjs",
+    "test:profile-commerce": "npm run build && node scripts/profile-commerce-check.mjs",
+    "test:merch": "npm run build && node scripts/merch-sync-check.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.116.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

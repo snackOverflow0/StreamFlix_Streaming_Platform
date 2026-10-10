@@ -1,0 +1,14 @@
+/* Client surfaces use the administration palette without changing browsing layout. */
+:root{--sf-bg:#080818;--sf-line:#ffffff21;--sf-accent:#7c3aed;--sf-glass-border:#ffffff21}
+.sf-client{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background-color:#080818!important;background-image:radial-gradient(ellipse at 100% 0%,rgba(90,46,120,.28),transparent 62%),radial-gradient(ellipse at 0% 100%,rgba(120,53,22,.17),transparent 55%),linear-gradient(135deg,#0b0918,#080713 58%,#141024)!important;background-attachment:fixed;color:#f8fafc}
+.sf-client-header,.sf-client-header[data-scrolled=true]{background:linear-gradient(180deg,#090d20f5,#090d20e6)!important;border-bottom:1px solid #ffffff21!important;backdrop-filter:blur(24px)}
+.sf-client-header nav[aria-label="Main navigation"] button{border-radius:999px;color:#a7a8bc;transition:background .25s,color .25s}
+.sf-client-header nav[aria-label="Main navigation"] button:hover{background:#a78bfa14;color:#fff}
+.sf-client-header nav[aria-label="Main navigation"]>span{border-radius:999px!important;border:1px solid #fb923c4d!important;background:linear-gradient(135deg,#a78bfa1a,#fb923c17)!important;box-shadow:0 8px 28px #7c3aed2e,inset 0 1px 0 #ffdab91a!important}
+.sf-client-header>div>button:first-child>span{background:linear-gradient(90deg,#60a5fa,#a78bfa);background-clip:text;-webkit-background-clip:text;color:transparent}
+.sf-glass-panel,.sf-client .sf-browse-board,.sf-client .sf-category-feature{background-color:#0c112799!important;background-image:radial-gradient(ellipse at 0% 0%,#8b5cf61f,transparent 55%),linear-gradient(130deg,#ffffff0e,transparent 48%,#60a5fa06);border:1px solid #ffffff21;border-radius:20px;box-shadow:0 18px 52px #0004,inset 0 1px 0 #ffffff1f;backdrop-filter:blur(18px)}
+.sf-client [data-slot=button][data-variant=default],.sf-client .bg-violet-600{background:linear-gradient(90deg,#2563eb,#7c3aed)!important;border:1px solid #c4b5fd42;border-radius:999px;color:white;box-shadow:0 6px 24px #60a5fa2e,inset 0 1px 0 #ffffff1a}
+.sf-client :is(input,textarea,[data-slot=select-trigger]){background:#090d2080;border-color:#ffffff21;border-radius:12px;color:#e2e8f0}
+[data-slot=dialog-content],[data-slot=sheet-content],[data-slot=select-content]{background-color:#101024!important;background-image:linear-gradient(130deg,#ffffff08,transparent 55%);border-color:#ffffff21;border-radius:20px;box-shadow:0 18px 52px #0006,inset 0 1px 0 #ffffff1f}
+.sf-client h2{color:#e9e0fa;letter-spacing:-.02em}.sf-client footer{border-color:#ffffff21;background:#090d2080}
+@media(prefers-reduced-motion:reduce){.sf-client-header nav button{transition:none}}

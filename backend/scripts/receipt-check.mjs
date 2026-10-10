@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+process.env.SUPABASE_URL='https://example.supabase.co';process.env.SUPABASE_SECRET_KEY='test-secret';process.env.BREVO_API_KEY='test-only';process.env.BREVO_SENDER_EMAIL='verified@example.com';process.env.STRIPE_SECRET_KEY='sk_test';
+const {supabase}=await import('../dist/config/supabase.js');
+const {stableMediaReference}=await import('../dist/utils/trailer-url.js');
+assert.equal(stableMediaReference('https://example.supabase.co/storage/v1/object/sign/Trailers/My%20Trailer.mp4?token=expired'),'storage://Trailers/My Trailer.mp4');
+assert.equal(stableMediaReference('https://other.supabase.co/storage/v1/object/sign/Trailers/My%20Trailer.mp4?token=expired'),'https://other.supabase.co/storage/v1/object/sign/Trailers/My%20Trailer.mp4?token=expired');
+const {receiptMessage,sendBrevo,processEmails,emailConfiguration}=await import('../dist/transactional-email.js');
+const {releaseExpiredCheckouts}=await import('../dist/payments.routes.js');
+const job={id:'61a0e2f1-b2f5-4a2d-8c61-332ec7f7a9ad',lock_token:'lock',event_key:'checkout:cs_test',user_id:7,kind:'subscription_receipt',recipient:'buyer@example.com',recipient_name:'<script>Buyer</script>',payload:{plan_name:'Premium & Friends',start_date:'2026-10-08',end_date:'2026-11-07',amount:299,session_id:'cs_test'},attempts:1,first_attempt_at:new Date().toISOString(),status:'sending'};
+const text=receiptMessage(job);assert.ok(text.htmlContent.includes('&lt;script&gt;'));assert.ok(!text.htmlContent.includes('<script>Buyer'));assert.match(text.textContent,/2026-11-07/);
+const cod=receiptMessage({...job,kind:'order_confirmation',payload:{order_id:8,product_name:'Mug',quantity:2,amount:400,payment_status:'pending',payment_method:'Cash on Delivery',order_status:'pending',delivery_method:'Store Pickup'}});assert.match(cod.textContent,/not a paid receipt/);assert.ok(!cod.subject.includes('payment and order are confirmed'));
+const originalFetch=globalThis.fetch;let response=201,requests=[],jobs=[job],updates=[],rpcCalls=[];
+globalThis.fetch=async(url,options)=>{requests.push({url:String(url),body:JSON.parse(options.body||'{}')});return new Response(JSON.stringify(response===201?{messageIds:['brevo-id']}:response===400?{code:'duplicate_parameter'}:{}),{status:response});};
+supabase.rpc=async(name,body)=>{rpcCalls.push({name,body});return {data:name==='claim_streamflix_emails'?jobs:[],error:null};};
+supabase.from=table=>{let values;const q={select(){return this},eq(){return this},update(v){values=v;return this},then(resolve){if(values)updates.push({table,values});return Promise.resolve({data:[],error:null}).then(resolve);}};return q;};
+try{
+ assert.ok(emailConfiguration().configured);
+ assert.equal((await sendBrevo(job)).messageId,'brevo-id');assert.equal(requests[0].body.headers.idempotencyKey,job.id);assert.equal(requests[0].body.messageVersions[0].to[0].email,'buyer@example.com');
+ requests=[];delete process.env.BREVO_API_KEY;await processEmails();assert.equal(requests.length,0);process.env.BREVO_API_KEY='test-only';
+ await Promise.all([processEmails(),processEmails()]);assert.equal(requests.length,1);assert.equal(updates.at(-1).values.status,'sent');
+ response=429;await processEmails();assert.equal(updates.at(-1).values.status,'pending');
+ response=401;await processEmails();assert.equal(updates.at(-1).values.status,'failed');
+ response=500;jobs=[{...job,attempts:6}];await processEmails();assert.equal(updates.at(-1).values.status,'uncertain');
+ response=400;assert.ok((await sendBrevo(job)).accepted);
+ response=500;jobs=[{...job,first_attempt_at:new Date(Date.now()-26*60*1000).toISOString()}];await processEmails();assert.equal(updates.at(-1).values.status,'uncertain');
+ const expired=[{session_id:'cs_expired',user_id:7,kind:'merchandise'},{session_id:'cs_open',user_id:7,kind:'merchandise'},{session_id:'cs_paid',user_id:7,kind:'merchandise'},{session_id:'cs_expiredpaid',user_id:7,kind:'merchandise'}];
+ supabase.from=table=>{let filters={},values;return {select(){return this},eq(k,v){filters[k]=v;return this},lt(){return this},order(){return this},limit(){return this},update(v){values=v;return this},maybeSingle:async()=>({data:{session_id:filters.session_id,user_id:7,kind:'merchandise',amount:100,fulfilled:false},error:null}),then(resolve){return Promise.resolve({data:values?[]:expired,error:null}).then(resolve);}};};
+ globalThis.fetch=async url=>{const id=String(url).split('/').at(-1);return new Response(JSON.stringify({id,client_reference_id:'7',metadata:{kind:'merchandise'},currency:'php',amount_total:10000,payment_intent:'pi_test',status:id==='cs_paid'?'complete':id==='cs_open'?'open':'expired',payment_status:id==='cs_paid'||id==='cs_expiredpaid'?'paid':'unpaid'}),{status:200});};
+ rpcCalls=[];await releaseExpiredCheckouts();assert.deepEqual(rpcCalls.filter(call=>call.name==='release_streamflix_checkout').map(call=>call.body.p_session),['cs_expired']);assert.equal(rpcCalls.filter(call=>call.name==='fulfill_streamflix_checkout').length,1);
+ console.log('Receipt checks passed: escaped email content, accurate COD wording, recipient mapping, stable provider idempotency key, disabled-provider behavior, worker coalescing, retry/failure/ambiguity handling, and stock reconciliation only for verified expired unpaid sessions. No provider messages or database writes were made.');
+}finally{globalThis.fetch=originalFetch;}

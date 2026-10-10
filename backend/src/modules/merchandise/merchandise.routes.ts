@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.middleware.js";
+import { buy, product, products, transactions } from "./merchandise.controller.js";
+const router = Router();
+router.get("/products", products);
+router.get("/products/:productId", product);
+router.use(requireAuth);
+router.get("/transactions/user/:userId", transactions);
+router.post("/transactions/user/:userId", buy);
+export default router;

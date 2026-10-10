@@ -1,0 +1,12 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.middleware.js";
+import { add, byContent, del, one, patch, ratings } from "./review.controller.js";
+const router = Router();
+router.get("/content/:contentId", byContent);
+router.get("/ratings", ratings);
+router.use(requireAuth);
+router.get("/:reviewId", one);
+router.post("/", add);
+router.patch("/:reviewId", patch);
+router.delete("/:reviewId", del);
+export default router;

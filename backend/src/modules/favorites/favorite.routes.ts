@@ -1,0 +1,12 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.middleware.js";
+import { byUser, create, createMine, me, one, remove } from "./favorite.controller.js";
+const router = Router();
+router.use(requireAuth);
+router.get("/me",me);
+router.post("/",createMine);
+router.get("/user/:userId", byUser);
+router.get("/:favoriteId", one);
+router.post("/user/:userId", create);
+router.delete("/:favoriteId", remove);
+export default router;

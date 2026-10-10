@@ -1,0 +1,70 @@
+@baseUrl = http://localhost:4000/api
+@token = PASTE_A_SUPABASE_ACCESS_TOKEN_HERE
+@userId = 1
+@contentId = 1
+
+### Health
+GET {{baseUrl}}/health
+
+### Content
+GET {{baseUrl}}/content
+
+### Content by ID
+GET {{baseUrl}}/content/{{contentId}}
+
+### Search content
+GET {{baseUrl}}/content/search?q=toy&type=movie
+
+### Genres
+GET {{baseUrl}}/genres
+
+### Seasons
+GET {{baseUrl}}/seasons/content/{{contentId}}
+
+### Episodes
+GET {{baseUrl}}/episodes/season/1
+
+### Authenticated user
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### User
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### Profiles
+GET {{baseUrl}}/profiles/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### Plans
+GET {{baseUrl}}/subscriptions/plans
+
+### Subscriptions
+GET {{baseUrl}}/subscriptions/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### Members
+GET {{baseUrl}}/members/subscription/1
+Authorization: Bearer {{token}}
+
+### Favorites
+GET {{baseUrl}}/favorites/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### Watch list
+GET {{baseUrl}}/watch-list/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### Reviews by content
+GET {{baseUrl}}/reviews/content/{{contentId}}
+
+### View history
+GET {{baseUrl}}/view-history/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### Feedback
+GET {{baseUrl}}/feedback/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### Merchandise products
+GET {{baseUrl}}/merchandise/products

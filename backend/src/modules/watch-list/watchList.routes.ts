@@ -1,0 +1,13 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.middleware.js";
+import { add, addMine, me, byUser, del, one, patch } from "./watchList.controller.js";
+const router = Router();
+router.use(requireAuth);
+router.get("/me",me);
+router.post("/",addMine);
+router.get("/user/:userId", byUser);
+router.get("/:listId", one);
+router.post("/user/:userId", add);
+router.patch("/:listId", patch);
+router.delete("/:listId", del);
+export default router;

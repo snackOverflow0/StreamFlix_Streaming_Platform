@@ -1,0 +1,22 @@
+import ClientNotifications from './components/ClientNotifications';
+import AuthGate from "./components/AuthGate";
+import AppHeader from "./components/AppHeader";
+import AppOverlays from "./components/AppOverlays";
+import MainContent from "./components/MainContent";
+import { useStreamFlix } from "./hooks/useStreamFlix";
+
+export default function StreamFlixApp() {
+  const state = useStreamFlix();
+
+  if (state.authStage !== "app") {
+    return <><div className="auth-notifications"><ClientNotifications/></div><AuthGate state={state} /></>;
+  }
+
+  return (
+    <main className="min-h-screen overflow-x-hidden bg-[#070b1a] pb-[calc(5.25rem+env(safe-area-inset-bottom))] text-white sm:pb-0">
+      <AppHeader state={state} />
+      <MainContent state={state} />
+      <AppOverlays state={state} />
+    </main>
+  );
+}

@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.middleware.js";
+import { add, byUser, mine, one, progress } from "./viewHistory.controller.js";
+const router = Router();
+router.use(requireAuth);
+router.get("/me", mine);
+router.get("/user/:userId", byUser);
+router.get("/:historyId", one);
+router.post("/", add);
+router.post("/progress", progress);
+export default router;
