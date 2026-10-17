@@ -1,3 +1,4 @@
+import { openMobileCheckout } from "@/lib/mobile-return";
 import {usePaymentAvailability} from "@/services/use-payment-availability";
 import { useEffect, useState } from "react";
 import { CheckCircle2, CreditCard, Loader2, MailCheck, ShieldCheck } from "lucide-react";
@@ -85,7 +86,7 @@ export default function SubscriptionPaymentPage({ currentPlan, plans, onBackToPl
       const result = await createSubscriptionCheckout(boot.user.user_id, plan.backendId);
       if (!result.checkout_url) throw new Error("Stripe did not return a checkout URL.");
       localStorage.setItem("streamflix-pending-payment", JSON.stringify({ planId: plan.id, userId: boot.user.user_id, sessionId: result.session_id }));
-      window.location.assign(result.checkout_url);
+      await openMobileCheckout(result.checkout_url);
     } catch (err) { setLoading(false); setError(err instanceof Error ? err.message : "Unable to start Stripe Checkout."); }
   }
 

@@ -1,3 +1,4 @@
+import { Capacitor } from "@capacitor/core";
 import { apiRequest } from "./api-client";
 
 export type SubscriptionCheckout = {
@@ -41,7 +42,7 @@ export type SubscriptionCheckoutStatus = {
 export function createSubscriptionCheckout(userId: number, planId: number) {
   return apiRequest<SubscriptionCheckout>("/payments/subscription-checkout", {
     method: "POST",
-    body: JSON.stringify({ user_id: userId, plan_id: planId }),
+    body: JSON.stringify({ user_id: userId, plan_id: planId, mobile_checkout: Capacitor.isNativePlatform() }),
   });
 }
 
@@ -54,7 +55,7 @@ export type MerchandiseCheckoutResponse = { checkout_url: string | null; session
 export function createMerchandiseCardCheckout(userId: number, items: Array<{ product_id: number; quantity: number }>, delivery: { profile_id: number; delivery_name: string; delivery_phone: string; delivery_address: string; delivery_method: string }) {
   return apiRequest<MerchandiseCheckoutResponse>(`/merchandise/orders/card/user/${userId}/checkout`, {
     method: "POST",
-    body: JSON.stringify({ items, ...delivery }),
+    body: JSON.stringify({ items, ...delivery, mobile_checkout: Capacitor.isNativePlatform() }),
   });
 }
 

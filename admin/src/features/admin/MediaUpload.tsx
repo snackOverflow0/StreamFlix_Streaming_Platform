@@ -15,11 +15,19 @@ export default function MediaUpload({name,value='',accept='image/*,video/*',prev
  async function choose(file?:File){if(!file)return;setError('');setFilename(file.name);setProgress(0);setBusy(true);onBusy?.(true);
  try{
   if(preview){setUrl(URL.createObjectURL(file));setProgress(100);return;}
-  const ticket=await apiRequest<Ticket>('/admin/uploads/sign',{method:'POST',body:JSON.stringify({name:file.name,mimeType:file.type,size:file.size,purpose:name==='image_url'?'product':file.type.startsWith('video/')?'trailer':'artwork'})});
-  if(file.size<=6*1024*1024){const {error}=await supabase.storage.from(ticket.bucket).uploadToSignedUrl(ticket.path,ticket.token,file,{contentType:file.type});if(error)throw error;setProgress(100);}
+  const MAX_UPLOAD = 512 * 1024 * 1024;
+  if(file.size>MAX_UPLOAD)throw new Error('Maximum upload size is 512 MB. Compress the trailer before uploading.');
+  if(!file.size)throw new Error('The selected file is empty.');
+  const allowed=['video/mp4','video/webm','video/quicktime','image/jpeg','image/png','image/webp'];
+  const mime=file.type || ({mp4:'video/mp4',webm:'video/webm',mov:'video/quicktime',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp'} as Record<string,string>)[file.name.split('.').pop()?.toLowerCase()||''];
+  if(!allowed.includes(mime))throw new Error('Choose an MP4, WebM, MOV, JPG, PNG or WebP file.');
+  if(accept.startsWith('video/')&&!mime.startsWith('video/'))throw new Error('Select a supported trailer video.');
+  if(accept.startsWith('image/')&&!mime.startsWith('image/'))throw new Error('Select a supported image.');
+  const ticket=await apiRequest<Ticket>('/admin/uploads/sign',{method:'POST',body:JSON.stringify({name:file.name,mimeType:mime,size:file.size,purpose:name==='image_url'?'product':mime.startsWith('video/')?'trailer':'artwork'})});
+  if(file.size<=6*1024*1024){const {error}=await supabase.storage.from(ticket.bucket).uploadToSignedUrl(ticket.path,ticket.token,file,{contentType:mime});if(error)throw error;setProgress(100);}
   else await new Promise<void>((resolve,reject)=>{
    const base=new URL(import.meta.env.VITE_SUPABASE_URL);if(base.hostname.endsWith('.supabase.co'))base.hostname=base.hostname.replace('.supabase.co','.storage.supabase.co');
-   active.current=new TusUpload(file,{endpoint:base.origin+'/storage/v1/upload/resumable',retryDelays:[0,1000,3000,5000,10000],headers:{'x-signature':ticket.token},metadata:{bucketName:ticket.bucket,objectName:ticket.path,contentType:file.type,cacheControl:'3600'},chunkSize:6*1024*1024,uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,onError:reject,onSuccess:()=>resolve(),onProgress:(sent,total)=>{if(mounted.current)setProgress(Math.round(sent/total*100));}});active.current.start();
+   active.current=new TusUpload(file,{endpoint:base.origin+'/storage/v1/upload/resumable',retryDelays:[0,1000,3000,5000,10000],headers:{'x-signature':ticket.token},metadata:{bucketName:ticket.bucket,objectName:ticket.path,contentType:mime,cacheControl:'3600'},chunkSize:6*1024*1024,uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,onError:(error)=>reject(new Error('Large video upload failed: '+error.message+'. Check Supabase Storage file limits and network connection.')),onSuccess:()=>resolve(),onProgress:(sent,total)=>{if(mounted.current)setProgress(Math.round(sent/total*100));}});active.current.start();
   });
   const done=await apiRequest<{url:string;asset:{asset_id:number;name:string;kind:string}}>('/admin/uploads/'+ticket.uploadId+'/complete',{method:'POST'});
   if(mounted.current)setUrl(done.url);await onUploaded?.(done.url,done.asset);

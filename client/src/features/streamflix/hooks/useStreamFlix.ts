@@ -1,3 +1,6 @@
+import { Capacitor } from "@capacitor/core";
+import { Browser } from "@capacitor/browser";
+import { registerMobileReturn, openMobileCheckout } from "@/lib/mobile-return";
 import {isKidsSuitable} from "../kids-policy";
 import {cartKey,readCart,writeCart,subtractPurchased,type ProfileCart} from "../profile-commerce";
 import {subscribeChanges} from '@/services/change-events';
@@ -379,6 +382,11 @@ export function useStreamFlix() {
     },
     []
   );
+
+  useEffect(() => registerMobileReturn(
+    async () => { setAuthError(""); await refreshBootstrap(); setAuthBusy(false); },
+    (message) => { setAuthError(message); setAuthBusy(false); }
+  ), [refreshBootstrap]);
 
   useEffect(() => {
     let mounted = true;
@@ -1035,16 +1043,19 @@ export function useStreamFlix() {
         "streamflix-explicitly-logged-out"
       );
 
-      const {
-        error,
-      } = await supabase.auth.signInWithOAuth({
+      const native = Capacitor.isNativePlatform();
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo:
-            `${window.location.origin}/oauth/callback`,
+          redirectTo: native ? "streamflix://auth/callback" : `${window.location.origin}/oauth/callback`,
+          skipBrowserRedirect: native,
           queryParams: { prompt: "select_account" },
         },
       });
+      if (native && !error) {
+        if (!data.url) throw new Error("Google did not provide a login URL.");
+        await Browser.open({ url: data.url });
+      }
 
       if (error) {
         throw error;
@@ -1312,12 +1323,14 @@ export function useStreamFlix() {
 
   async function submitFeedback(
     subject: string,
-    message: string
+    message: string,
+    type = "general"
   ) {
     try {
       await createFeedback(
         subject,
-        message
+        message,
+        type
       );
 
       setFeedbackOpen(false);
@@ -1463,7 +1476,7 @@ export function useStreamFlix() {
       if (!result.checkout_url) throw new Error("Stripe did not return a checkout URL.");
       recordMutation("MerchandiseCheckoutRedirect", `Opening secure Stripe checkout for ₱${total.toLocaleString()}`);
       try { localStorage.setItem(`streamflix-merch-checkout:${result.session_id}`,JSON.stringify({userId:currentUserId,profileId,items})); } catch { /* Checkout can continue without local storage; do not clear bags without a snapshot. */ }
-      window.location.assign(result.checkout_url);
+      await openMobileCheckout(result.checkout_url);
       return;
     }
     const rows = (await createMerchandiseCodOrder(currentUserId, items, { profile_id: profileId, delivery_name: deliveryDetails.name, delivery_phone: deliveryDetails.phone, delivery_address: deliveryDetails.address, delivery_method: deliveryMethod })) as import("@/services/merchandise.service").MerchandiseTransaction[];

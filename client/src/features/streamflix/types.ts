@@ -66,7 +66,7 @@ export type SubscriptionReceipt = {
   status: "Completed";
 };
 
-export type View = "home" | "shows" | "movies" | "new-releases" | "my-list" | "store";
+export type View = "home" | "shows" | "movies" | "new-releases" | "my-list" | "store" | "search" | "cart" | "feedback";
 export type FooterPanel = "devices" | "help" | "accessibility" | "legal" | null;
 export type AuthStage = "login" | "register" | "plans" | "subscription-payment" | "profiles" | "app";
 

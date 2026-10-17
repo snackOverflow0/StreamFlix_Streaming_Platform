@@ -8,10 +8,17 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "predev": "node ../scripts/prepare-dev.mjs"
+    "predev": "node ../scripts/prepare-dev.mjs",
+    "build:mobile": "tsc -b && vite build --mode mobile && cap sync android",
+    "android": "cap open android",
+    "android:icons": "capacitor-assets generate --android --iconBackgroundColor \"#070b1a\" --splashBackgroundColor \"#070b1a\""
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/app": "^7.1.2",
+    "@capacitor/browser": "^7.0.5",
+    "@capacitor/core": "^7.4.3",
     "@hookform/resolvers": "^5.7.1",
     "@shadcn/react": "^0.3.0",
     "@supabase/supabase-js": "2.116.0",
@@ -37,6 +44,8 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.4.3",
     "@eslint/js": "^9.0.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^22.19.19",

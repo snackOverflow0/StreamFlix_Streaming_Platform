@@ -6,5 +6,8 @@ export function getViewTitle(view: View, query: string) {
   if (view === "shows") return "TV Shows";
   if (view === "new-releases") return "New Releases";
   if (view === "store") return "Merch Hub";
+  if (view === "cart") return "Your cart";
+  if (view === "feedback") return "Send feedback";
+  if (view === "search") return "Search";
   return "Movies";
 }

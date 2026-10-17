@@ -1,17 +1,47 @@
-import {manilaDate,subscriptionAccess} from './subscriptionAccess';
-import {useState,useEffect,Fragment} from 'react';
-import {ChevronDown,Pencil,Search} from 'lucide-react';
-import {WorkspaceInsights,AudienceAvatar,AudienceStatus} from './WorkspaceVisuals';
-import type {ManagementData,ManagedRow} from './ManagementWorkspace';
-export function latestSubscription(user:ManagedRow,data:ManagementData){const today=manilaDate();const rows=(data.subscriptions||[]).filter(s=>String(s.subscription_user_id)===String(user.user_id));return rows.sort((a,b)=>{const live=(r:ManagedRow)=>r.status==='active'&&String(r.start_date)<=today&&(!r.end_date||String(r.end_date)>=today)?1:0;return live(b)-live(a)||String(b.end_date).localeCompare(String(a.end_date))||Number(b.subscription_id)-Number(a.subscription_id);})[0];}
-export default function UsersWorkspace({data,query,onQuery,onEdit}:{data:ManagementData;query:string;onQuery:(s:string)=>void;onEdit:(r:ManagedRow)=>void}){
- const [clock,setClock]=useState(()=>Date.now());useEffect(()=>{const id=setInterval(()=>setClock(Date.now()),30000);return()=>clearInterval(id);},[]);
- const [expanded,setExpanded]=useState<string|null>(null),[status,setStatus]=useState('All'),[expiry,setExpiry]=useState('All'),[from,setFrom]=useState(''),[to,setTo]=useState(''),[offset,setOffset]=useState(0);
- const today=manilaDate(new Date(clock)),soon=new Date(Date.now()+7*86400000).toISOString().slice(0,10);
- const rows=(data.users||[]).filter(u=>JSON.stringify(u).toLowerCase().includes(query.toLowerCase())).filter(u=>status==='All'||u.account_status===status).filter(u=>{const sub=latestSubscription(u,data),end=String(sub?.end_date||'');return (expiry==='All'||expiry==='None'&&!sub||expiry==='Expired'&&!!end&&end<today||expiry==='Soon'&&!!end&&end>=today&&end<=soon)&&(!from||end>=from)&&(!to||!!end&&end<=to);});
- const start=Math.min(offset,Math.max(0,Math.floor((rows.length-1)/10)*10));
- return <><WorkspaceInsights page="Users" data={data}/><section className="panel records user-workspace"><div className="audience-table-heading"><h2>Subscriber directory</h2><p>Access expires automatically after the subscription end date. Account status controls manual suspension. Expand an account to review profiles and members.</p></div><div className="tools user-filters"><label className="search"><input aria-label="Search subscribers" value={query} placeholder="Search name or email…" onChange={e=>{onQuery(e.target.value);setOffset(0);}}/><Search size={16}/></label><label>Status<select value={status} onChange={e=>{setStatus(e.target.value);setOffset(0);}}>{['All','active','suspended','deactivated'].map(v=><option key={v}>{v}</option>)}</select></label><label>Subscription end<select value={expiry} onChange={e=>{setExpiry(e.target.value);setOffset(0);}}><option value="All">All dates</option><option value="Soon">Expiring in 7 days</option><option value="Expired">Expired</option><option value="None">No subscription</option></select></label><label>End date from<input type="date" value={from} onChange={e=>{setFrom(e.target.value);setOffset(0);}}/></label><label>End date to<input type="date" min={from} value={to} onChange={e=>{setTo(e.target.value);setOffset(0);}}/></label></div>{from&&to&&from>to&&<p className="error">Choose an end date on or after the start date.</p>}<div className="table-scroll"><table><thead><tr>{['Subscriber','Email','Account Status','Access · Automatic','Plan','End Date','Actions'].map(v=><th key={v}>{v}</th>)}</tr></thead><tbody>{rows.slice(start,start+10).map(user=>{
- const id=String(user.user_id),sub=latestSubscription(user,data),plan=(data.plans||[]).find(p=>String(p.plan_id)===String(sub?.plan_id)),profiles=(data.profiles||[]).filter(p=>String(p.user_id)===id),members=(data.members||[]).filter(m=>String(m.subscription_id)===String(sub?.subscription_id)),memberUsers=new Set(members.map(m=>String(m.user_id)));if(sub)memberUsers.add(id);
- return <Fragment key={id}><tr className={expanded===id?'selected':''}><td><button className="user-expand" aria-expanded={expanded===id} aria-controls={'user-'+id} onClick={()=>setExpanded(expanded===id?null:id)}><AudienceAvatar name={user.full_name}/><strong>{user.full_name}</strong><ChevronDown size={16}/></button></td><td>{user.email}</td><td><AudienceStatus value={user.account_status}/></td><td><AudienceStatus value={subscriptionAccess(sub,today)}/></td><td>{plan?.plan_name||'—'}</td><td>{sub?.end_date||'—'}</td><td><button aria-label={'Edit '+user.full_name} onClick={()=>onEdit(user)}><Pencil size={16}/></button></td></tr><tr className="user-expanded"><td colSpan={7}><div className={'user-reveal '+(expanded===id?'is-open':'')} aria-hidden={expanded!==id} inert={expanded!==id}><div className="user-reveal-clip"><div id={'user-'+id} className="user-expanded-grid"><section><h3>Viewing profiles · {profiles.length}</h3>{profiles.length?profiles.map(p=><p key={String(p.profile_id)}>{p.profile_name}<small>{p.device||'No device recorded'}</small></p>):<p>No profiles yet.</p>}</section><section><h3>Subscription members</h3><p><strong>{sub?memberUsers.size:0} / {plan?.max_members||0}</strong> members, including the account owner</p><p>{plan?.plan_name||'No plan'} · {subscriptionAccess(sub,today)}</p>{memberUsers.size>Number(plan?.max_members||0)&&sub&&<p className="error">Member count exceeds this plan’s limit.</p>}{members.map(m=><p key={String(m.member_id)}>{(data.users||[]).find(u=>String(u.user_id)===String(m.user_id))?.full_name||'Subscriber '+m.user_id}<small>{m.relationship}</small></p>)}</section></div></div></div></td></tr></Fragment>;
- })}</tbody></table>{!rows.length&&<p className="empty">No users match these filters.</p>}</div><footer><small>{rows.length?`${start+1}–${Math.min(start+10,rows.length)}`:'0'} of {rows.length} users</small><div><button disabled={!start} onClick={()=>setOffset(start-10)}>Previous</button><button disabled={start+10>=rows.length} onClick={()=>setOffset(start+10)}>Next</button></div></footer></section></>;
+import { useMemo, useState } from 'react';
+import type { ManagementData, ManagedRow } from './ManagementWorkspace';
+import { subBadge, subState } from './ManagementWorkspace';
+import { Ic } from './proto-icons';
+import { Av, B, Chips, Empty, Search, fmtMonth, fmtShort, str, usePaged } from './proto-ui';
+
+/* Subscribers page in the prototype layout: filters, table and a detail panel with plan and profiles. */
+type F = 'all' | 'active' | 'expiring' | 'none' | 'restricted';
+const acctBadge = (s: unknown) => str(s) === 'suspended' ? <B tone="warn">Suspended</B> : str(s) === 'deactivated' ? <B tone="bad">Deactivated</B> : <B tone="ok">Active</B>;
+
+export default function UsersWorkspace({ data, query, onQuery, onEdit, onPage }: { data: ManagementData; query: string; onQuery: (q: string) => void; onEdit: (row: ManagedRow) => void; onPage: (p: string, q?: string) => void }) {
+  const [f, setF] = useState<F>('all');
+  const [sel, setSel] = useState('');
+  const m = useMemo(() => {
+    const latest = new Map<string, ManagedRow>();
+    for (const s of [...(data.subscriptions || [])].sort((a, b) => str(a.start_date).localeCompare(str(b.start_date)))) latest.set(str(s.subscription_user_id), s);
+    const plans = new Map((data.plans || []).map(p => [str(p.plan_id), p]));
+    const profiles = (data.profiles || []);
+    const users = (data.users || []).filter(u => !u.deleted_at).map(u => { const s = latest.get(str(u.user_id)); const st = subState(s); return { u, s, st, plan: s ? plans.get(str(s.plan_id)) : undefined, profiles: profiles.filter(p => str(p.user_id) === str(u.user_id)) }; });
+    return { users };
+  }, [data]);
+  type U = (typeof m.users)[number];
+  const inF = (x: U, k: F) => k === 'all' || (k === 'restricted' ? str(x.u.account_status) !== 'active' : k === 'none' ? ['none', 'cancelled', 'expired'].includes(x.st) : x.st === k);
+  const counts = (k: F) => m.users.filter(x => inF(x, k)).length;
+  const rows = m.users.filter(x => inF(x, f)).filter(x => `${str(x.u.full_name)} ${str(x.u.email)}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => str(b.u.created_at).localeCompare(str(a.u.created_at)));
+  const P = usePaged(rows, 8, `${f}|${query}`);
+  const cur = rows.find(x => str(x.u.user_id) === sel) || P.rows[0];
+  const max = Number(cur?.plan?.max_members) || 1;
+  return <div className="split">
+    <section className="sec">
+      <div className="toolbar"><Search value={query} onChange={onQuery} label="Search name or email…" /><Chips label="Filter" value={f} onChange={setF} options={[['all', 'All', counts('all')], ['active', 'Subscribed', counts('active')], ['expiring', 'Expiring', counts('expiring')], ['none', 'No active plan', counts('none')], ['restricted', 'Restricted', counts('restricted')]]} /></div>
+      <div className="tw"><table className="cards-m"><thead><tr><th>User</th><th>Account</th><th>Subscription</th><th>Plan</th><th>Profiles</th><th>Joined</th></tr></thead><tbody>{P.rows.map(x => <tr key={str(x.u.user_id)} className={cur === x ? 'sel' : ''}>
+        <td className="main"><button type="button" className="cell-main" onClick={() => setSel(str(x.u.user_id))}><Av name={x.u.full_name || x.u.email} /><span>{str(x.u.full_name) || 'No name'}<small>{str(x.u.email)}</small></span></button></td>
+        <td data-label="Account">{acctBadge(x.u.account_status)}</td><td data-label="Subscription">{subBadge(x.st)}</td>
+        <td data-label="Plan">{str(x.plan?.plan_name) || 'None'}</td><td data-label="Profiles" className="num">{x.profiles.length}</td><td data-label="Joined">{fmtMonth(x.u.created_at)}</td>
+      </tr>)}</tbody></table>{rows.length ? null : <Empty icon="users" title="No subscribers match" text="Try a different filter." />}</div>
+      {P.pager}
+    </section>
+    {cur ? <aside className="sec inspector">
+      <div className="ucard-hero"><Av name={cur.u.full_name || cur.u.email} /><div style={{ minWidth: 0 }}><h3>{str(cur.u.full_name) || 'No name'}</h3><small style={{ color: 'var(--t3)', fontSize: 12 }}>{str(cur.u.email)}</small></div></div>
+      <div className="two-status"><div><small>Account</small>{acctBadge(cur.u.account_status)}</div><div><small>Subscription</small>{subBadge(cur.st)}</div></div>
+      <dl className="dl" style={{ paddingTop: 0 }}><dt>Plan</dt><dd>{str(cur.plan?.plan_name) || 'None'}</dd><dt>{['active', 'expiring'].includes(cur.st) ? 'Renews' : 'Ended'}</dt><dd>{cur.s ? fmtShort(cur.s.end_date) : '—'}</dd>{cur.u.phone_number ? <><dt>Phone</dt><dd>{str(cur.u.phone_number)}</dd></> : null}</dl>
+      <div className="ins-sec"><h4>Profiles · {cur.profiles.length} of {max} allowed</h4>{cur.profiles.length ? <div className="profiles">{cur.profiles.map(p => <div key={str(p.profile_id)} className="profile"><Av name={p.profile_name} /><span>{str(p.profile_name)}</span>{p.is_kids === true && <span className="tag-kid">KIDS</span>}</div>)}</div> : <small style={{ color: 'var(--t3)' }}>No profiles yet.</small>}</div>
+      <div className="ins-acts"><button type="button" className="btn btn-g" onClick={() => onEdit(cur.u)}><Ic n="edit" s={15} />Edit account</button><button type="button" className="btn btn-g" onClick={() => onPage('Subscriptions', str(cur.u.full_name))}><Ic n="card" s={15} />Subscription</button></div>
+    </aside> : <aside className="sec inspector"><Empty icon="users" title="No subscriber selected" text="Pick someone from the list." /></aside>}
+  </div>;
 }
