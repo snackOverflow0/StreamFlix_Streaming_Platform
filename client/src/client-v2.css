@@ -507,3 +507,56 @@
 @media (prefers-reduced-motion:reduce) {
   .v-app *, .v-app *::before, .v-app *::after { scroll-behavior:auto!important; animation-duration:1ms!important; animation-iteration-count:1!important; transition-duration:1ms!important; }
 }
+
+
+/* ===== Prototype fidelity refinements (October 2026) =====
+   The uploaded StreamFlix Client Prototype is the visual reference.
+   Scoped to the client shell: no auth, playback, profile or commerce logic changes. */
+.v-app {
+  --fs-row:20px;
+  --fast:150ms;
+  --dur:240ms;
+  --slow:420ms;
+}
+.v-app .v-nav {
+  background:rgba(13,17,39,.72);
+  border-color:var(--line);
+}
+.v-app .v-nav.solid {
+  background:rgba(13,17,39,.96);
+  border-color:var(--line-2);
+}
+.v-app .v-hero::after {
+  background:
+    linear-gradient(90deg,rgba(13,17,39,.96) 0%,rgba(13,17,39,.78) 34%,rgba(13,17,39,.2) 64%,transparent 82%),
+    linear-gradient(0deg,var(--bg) 0%,rgba(13,17,39,.6) 18%,transparent 42%),
+    linear-gradient(180deg,rgba(13,17,39,.6) 0%,transparent 22%);
+}
+.v-app .v-rows { padding-bottom:64px; }
+.v-app .v-row-head h2 { font-size:var(--fs-row); }
+.v-app .v-card:hover .v-pst,
+.v-app .v-card:focus-visible .v-pst {
+  transform:translateY(-4px);
+  box-shadow:0 0 0 2px rgba(248,243,230,.5),var(--sh-card);
+}
+.v-app .v-cap b { font-size:16.5px; }
+.v-app .v-cap small { font-size:14.5px; color:var(--t2); }
+.v-app .v-play,
+.v-app .v-circ.on {
+  background:var(--t1);
+  color:#1e1f24;
+}
+.v-app .v-glass { border-color:var(--line-2); }
+.v-app .v-bbar { background:rgba(13,17,39,.97); }
+@media (max-width:820px) {
+  .v-app .v-hero::after {
+    background:linear-gradient(0deg,var(--bg) 2%,rgba(13,17,39,.88) 30%,rgba(13,17,39,.2) 62%,rgba(13,17,39,.5) 100%);
+  }
+  .v-app .v-rows { margin-top:-60px; }
+  .v-app .v-row { margin-bottom:26px; }
+  .v-app .v-cap b { font-size:14px; }
+  .v-app .v-cap small { font-size:12.5px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .v-app .v-slide.on img { transform:scale(1.04); }
+}
