@@ -1811,6 +1811,7 @@ ${formatDate(row.watch_date)}`
     favoriteItems,
     watchlistItems,
     recentlyWatched,
+    historyRows,
 
     favoriteLabels,
     watchlistLabels,
