@@ -74,4 +74,6 @@ http://localhost:5173
 - Backend feedback
 - Supabase session persistence and sign-out
 
-A real payment gateway is not included. Selecting a subscription activates a database subscription record for the project/demo, and merchandise checkout records transactions in the backend database without charging a real payment provider.
+Subscription card checkout is integrated through the Express backend and Stripe when valid server-side Stripe keys and webhook configuration are present. The client verifies the checkout status through the backend before proceeding. Merchandise checkout supports the backend's configured card checkout and cash-on-delivery flows. Do not treat a frontend redirect alone as payment confirmation.
+
+The client visual styling is based on `StreamFlix Client Prototype.html`, but the prototype's mock catalog, generated sample artwork, and local-only interaction handlers are not used as application data. The React app loads real catalog, profile, review, subscription, and commerce data through the backend.

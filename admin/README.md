@@ -1,77 +1,36 @@
-# StreamFlix Frontend
+# StreamFlix Admin
 
-This frontend is backend-driven. The browser uses Supabase Auth only for authentication/session handling. Application data is read and written through the StreamFlix Express backend.
-
-## Data flow
-
-```text
-Supabase Auth
-   ↓ access token
-React/Vite frontend
-   ↓ Authorization: Bearer <token>
-Express backend
-   ↓ server-only Supabase client
-StreamFlix PostgreSQL tables
-```
-
-The frontend no longer uses a hardcoded movie catalog, hardcoded plans, hardcoded merchandise list, fake ratings, or fake login state.
+The admin dashboard is a separate React + TypeScript + Vite application. It uses Supabase Auth for sessions and calls the Express backend for administrative data and mutations. Authorization is enforced by the backend; hiding admin controls in the UI is not a security boundary.
 
 ## Environment
 
-Create `.env` from `.env.example`:
+Copy `.env.example` to `.env` and set:
 
 ```env
-VITE_API_URL=http://localhost:4000/api
-VITE_SUPABASE_URL=https://qlpyjglxifzwvcxrkaqo.supabase.co
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
+VITE_API_URL=http://localhost:4000/api
 ```
 
-Only the Supabase publishable key belongs in a `VITE_` variable. Never place the service-role/secret key here.
+Only a Supabase publishable key belongs in frontend variables. Never place a Supabase secret/service-role key in the admin app.
 
-## Supabase Auth configuration
+## Run locally
 
-For local development, add this Redirect URL in Supabase Authentication → URL Configuration:
-
-```text
-http://localhost:5173/oauth/callback
-```
-
-For Google OAuth, the Google Cloud OAuth application's authorized redirect URI is the Supabase callback URL:
-
-```text
-https://qlpyjglxifzwvcxrkaqo.supabase.co/auth/v1/callback
-```
-
-The frontend itself redirects to `/oauth/callback`; Supabase completes the OAuth exchange and the app then loads the authenticated StreamFlix data from `/api/auth/bootstrap`.
-
-## Run
+Start the backend first, then from this folder:
 
 ```cmd
 npm install
 npm run dev
 ```
 
-The default frontend is:
+Vite uses port `5174` by default: http://localhost:5174
 
-```text
-http://localhost:5173
-```
+## Deployment
 
-## Supported frontend features
+Set `VITE_API_URL` to the deployed backend's HTTPS API base (ending in `/api`) and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in the hosting provider. Add the admin origin to the backend's comma-separated `FRONTEND_URL` allowlist. Add the correct OAuth callback/redirect URLs in Supabase Auth.
 
-- Supabase email/password login
-- Supabase signup
-- Supabase Google OAuth
-- Backend bootstrap after authentication
-- Backend content catalog and presentation data
-- Backend ratings and review counts
-- Backend seasons and episodes
-- Backend Continue Watching progress via `view_history`
-- Backend favorites and watch list
-- Backend profiles
-- Backend subscriptions and plans
-- Backend merchandise and transaction history
-- Backend feedback
-- Supabase session persistence and sign-out
+## Security notes
 
-A real payment gateway is not included. Selecting a subscription activates a database subscription record for the project/demo, and merchandise checkout records transactions in the backend database without charging a real payment provider.
+- The backend must validate the Supabase access token and enforce admin-role checks on every protected route.
+- The frontend's role checks are for presentation only.
+- Keep server secrets in `backend/.env` or the backend host's secret manager.

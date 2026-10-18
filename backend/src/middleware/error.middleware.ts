@@ -27,6 +27,23 @@ export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
     }
   }
 
-  console.error(JSON.stringify({event:"request_error",requestId:res.locals.requestId,code:typeof error?.code==="string"?error.code:"INTERNAL",name:error instanceof Error?error.name:"Error"}));
+
+
+console.error(JSON.stringify({
+  event: "request_error",
+  requestId: res.locals.requestId,
+  path: _req.path,
+  code: typeof error?.code === "string"
+    ? error.code
+    : "INTERNAL",
+  name: error instanceof Error
+    ? error.name
+    : "Error",
+  operation: typeof error?.code === "string"
+    ? "database"
+    : "application",
+}));
+
+
   res.status(500).json({ message: "Internal server error",requestId:res.locals.requestId });
 };

@@ -425,3 +425,85 @@
   .v-crumbs ol{font-size:12px;margin-bottom:8px}
   .v-d-copy .v-crumbs{display:block}
 }
+
+
+/* ===== Prototype design integration: soft midnight theme =====
+   Visual tokens adapted from StreamFlix Client Prototype.html.
+   Rendering and data remain owned by the React/Supabase application. */
+.v-app {
+  --bg:#0d1127;
+  --bg-2:#11162f;
+  --s1:#1b2247;
+  --s2:#222a52;
+  --s3:#2b335c;
+  --glass-hi:rgba(38,40,48,.96);
+  --line:rgba(248,243,230,.08);
+  --line-2:rgba(248,243,230,.14);
+  --accent:#8a80d8;
+  --accent-2:#8a80d8;
+  --accent-grad:#8a80d8;
+  --accent-soft:rgba(138,128,216,.16);
+  --accent-line:rgba(138,128,216,.5);
+  --violet:#b9b2ec;
+  --t1:#f8f3e6;
+  --t2:rgba(248,243,230,.74);
+  --t3:rgba(248,243,230,.52);
+  --ok:#7fc8a0;
+  --warn:#d8c27e;
+  --bad:#e08a97;
+  --star:#d8c27e;
+  --sh-card:0 10px 24px -14px rgba(0,0,0,.55);
+  --sh-pop:0 20px 50px -20px rgba(0,0,0,.6);
+  color:var(--t1);
+  background:var(--bg);
+  line-height:1.6;
+  letter-spacing:.005em;
+}
+.v-nav { background:rgba(13,17,39,.72); border-color:var(--line); }
+.v-nav.solid { background:rgba(13,17,39,.96); box-shadow:0 10px 28px -18px rgba(0,0,0,.55); }
+.v-links button { font-size:15px; height:40px; padding-inline:15px; }
+.v-hero h1,.v-d-copy h2,.v-page-h h1 { color:var(--t1); text-shadow:none; letter-spacing:-.01em; }
+.v-hero h1 { font-size:clamp(34px,4.6vw,64px); }
+.v-syn,.v-d-body .lead { color:var(--t2); }
+.v-btn.v-play { background:var(--t1); color:#1e1f24; }
+.v-btn.v-play:hover { background:#f3f1ec; box-shadow:none; }
+.v-glass,.v-btn.v-glass { background:rgba(248,243,230,.08); border-color:var(--line-2); }
+.v-btn.v-accent,.v-accent { background:var(--accent); color:#191a1f; box-shadow:none; }
+.v-chip.on { background:var(--t1); color:#1e1f24; border-color:var(--t1); }
+.v-card:hover,.v-card:focus-visible { box-shadow:0 0 0 2px rgba(248,243,230,.5),var(--sh-card); }
+.v-badge,.v-progress i,.v-scrub i { background:var(--accent); }
+.v-hero-eyebrow,.v-eyebrow { color:var(--violet); }
+.v-hero-eyebrow i,.v-eyebrow i { background:var(--accent); }
+.v-rate,.v-rating { color:var(--star); }
+.v-rank { color:transparent; -webkit-text-stroke:2px rgba(248,243,230,.7); }
+.v-meta { font-size:15px; }
+.v-age { min-height:23px; font-size:12px; padding-inline:7px; }
+.v-syn { font-size:17px; }
+.v-cap { margin-top:10px; }
+.v-cap b { font-size:16.5px; }
+.v-cap small { font-size:14.5px; color:var(--t2); }
+.v-art,.v-poster-art { filter:saturate(.7) brightness(.9); }
+.v-detail,.v-backdrop { color:var(--t1); }
+.v-detail { background:var(--bg-2); border-color:var(--line-2); box-shadow:var(--sh-pop); }
+.v-backdrop { background:rgba(3,5,14,.72); }
+.v-d-close { background:rgba(13,17,39,.72); }
+.v-d-body,.v-d-sec { color:var(--t1); }
+.v-d-facts,.v-facts { color:var(--t2); }
+.v-review-strip,.v-rv,.v-v-review-strip { background:var(--s1); border-color:var(--line); }
+.v-row-heading { color:var(--t1); }
+.v-row-eyebrow,.v-row-count,.v-sub { color:var(--t3); }
+.v-sk { background:linear-gradient(100deg,var(--s1) 20%,var(--s2) 50%,var(--s1) 80%); }
+.v-search { background:var(--s1); border-color:var(--line-2); }
+.v-search:focus-within { border-color:var(--accent-line); box-shadow:0 0 0 4px var(--accent-soft); }
+.v-search input { color:var(--t1); }
+.v-empty { color:var(--t2); }
+.v-empty b { color:var(--t1); }
+.v-empty .ic { background:var(--s2); color:var(--violet); }
+.v-bottom-bar { background:rgba(13,17,39,.97); }
+.v-app [data-sonner-toast] { background:var(--glass-hi); }
+.v-app .v-progress i,.v-app .v-watch-progress i { background:var(--accent); }
+.v-app .v-nav,.v-app .v-detail,.v-app .v-card,.v-app .v-panel { box-shadow:var(--sh-card); }
+.v-app button:focus-visible,.v-app a:focus-visible { outline-color:var(--violet); }
+@media (prefers-reduced-motion:reduce) {
+  .v-app *, .v-app *::before, .v-app *::after { scroll-behavior:auto!important; animation-duration:1ms!important; animation-iteration-count:1!important; transition-duration:1ms!important; }
+}

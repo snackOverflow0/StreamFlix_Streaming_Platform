@@ -71,7 +71,7 @@ GET http://localhost:4000/api/health
 Database connectivity check:
 
 ```text
-GET http://localhost:4000/api/test-db
+GET http://localhost:4000/api/ready
 ```
 
 ## Auth bootstrap endpoint
@@ -118,3 +118,14 @@ POST /api/feedback
 Supabase Auth owns login identity, password handling, sessions, and Google OAuth. StreamFlix `public.users` continues to hold application/business data. The current bridge resolves the `public.users` record by the authenticated Supabase email and automatically creates the application row when a newly authenticated Supabase user does not yet have one.
 
 The backend never sends its Supabase secret key to the browser.
+
+
+## Stripe checkout setup
+
+Subscription checkout is available only when `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are configured. The client checks `GET /api/payments/config` before enabling card checkout. Use Stripe test keys while developing, and configure the Stripe webhook to forward `checkout.session.completed` and the relevant asynchronous success events to:
+
+```text
+https://YOUR_BACKEND_HOST/api/payments/webhook
+```
+
+For local testing with Stripe CLI, forward the same events to `http://localhost:4000/api/payments/webhook`. Never expose Stripe secret keys or webhook signing secrets to either frontend. A payment is not considered successful until the backend confirms the checkout status and webhook fulfillment.

@@ -14,7 +14,14 @@ export async function listProducts() {
   const { data, error } = await supabase.from("merchandise_product").select("product_id, product_name, category, price, listing_status, stock_quantity, image_url, description, variants").neq("listing_status","removed").order("product_name");
   if (error) throw error;
   await warmMediaUrls((data??[]).map(item=>item.image_url));
-  return await Promise.all((data ?? []).map(async (item) => ({ ...item, stock:Number(item.stock_quantity), stock_quantity:Number(item.stock_quantity), image_url:await resolveTrailerUrl(item.image_url || null), stock_label:item.listing_status!=="active"||Number(item.stock_quantity)<=0?"Sold out":Number(item.stock_quantity)<=5?"Low stock":null }))) as Product[];
+  return await Promise.all((data ?? []).map(async (item) => ({ ...item, stock:Number(item.stock_quantity), stock_quantity:Number(item.stock_quantity), 
+image_url: await resolveTrailerUrl(item.image_url || null).catch((error) => {
+  if (error?.code === "NoSuchKey" || error?.statusCode === "404") {
+    return null;
+  }
+  throw error;
+}),
+ stock_label:item.listing_status!=="active"||Number(item.stock_quantity)<=0?"Sold out":Number(item.stock_quantity)<=5?"Low stock":null }))) as Product[];
 }
 export async function getProduct(productId: number) { const products = await listProducts(); const product = products.find((item) => item.product_id === productId); if (!product) throw new AppError(404, "Product not found"); return product; }
 export async function listTransactions(req: Request, userId: number) { await ensureUserOwnsResource(req, userId); const profileId=parseId(String(req.query.profile_id),"profile_id"); const profile=await getProfile(req,profileId); if(profile.user_id!==userId)throw new AppError(403,"Profile does not belong to this account"); const { data, error } = await supabase.from("merchandise_transaction").select(transactionColumns).eq("user_id", userId).eq("profile_id",profileId).order("created_at", { ascending: false }).returns<Transaction[]>(); if (error) throw error; return data ?? []; }
