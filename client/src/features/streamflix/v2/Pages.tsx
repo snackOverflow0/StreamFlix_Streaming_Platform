@@ -134,7 +134,7 @@ export function CartPage({ state }: P) {
         {transactions.length > 0 && <div><h3 style={{ marginTop: 6 }}>Your orders</h3>{transactions.slice(0, 5).map(tx => <div key={tx.id} className="v-order"><div><b>Order {tx.id}</b><span className={`v-st ${statusTone(tx.status)}`}>{tx.status}</span></div><small>{tx.paymentMethod} · {tx.deliveryMethod}</small><b>{peso(tx.total)}</b></div>)}</div>}
       </aside>
     </div>
-    {open && <div className="v-backdrop" onClick={e => { if (e.target === e.currentTarget && !busy) setOpen(false); }}>
+    {open && createPortal(<div className="v-app v-backdrop v-checkout-backdrop" onClick={e => { if (e.target === e.currentTarget && !busy) setOpen(false); }}>
       <div className="v-dialog" role="dialog" aria-modal="true" aria-labelledby="co-t">
         <h2 id="co-t">Checkout</h2>
         <div style={{ display: "grid", gap: 8 }}><span className="v-label">Payment</span>{["Card", "Cash on Delivery"].map(m => { const dis = m === "Card" && !availability.card; return <label key={m} className={`v-radio ${payment === m ? "on" : ""}`} style={dis ? { opacity: .5 } : undefined}><input type="radio" name="pay" checked={payment === m} disabled={dis} onChange={() => setPayment(m)} />{m === "Card" ? (availability.card ? "Credit / Debit card via Stripe" : "Card checkout unavailable") : m}</label>; })}</div>
@@ -150,7 +150,7 @@ export function CartPage({ state }: P) {
           <button type="button" className="v-btn v-play sm" disabled={busy || (payment === "Card" && !availability.card)} onClick={() => void submit()}>{busy ? "Processing…" : payment === "Card" ? `Continue to Stripe · ${peso(total)}` : `Place order · ${peso(total)}`}</button>
         </div>
       </div>
-    </div>}
+    </div>, document.body)}
   </div>;
 }
 
